@@ -5,12 +5,14 @@ Copyright (c) 2016 tilt (https://github.com/AeonDave/doork)
 See the file 'LICENSE' for copying permission
 """
 
-import sys, os, settings, source, codecs
+import sys
+import os
+import lib.source as source
+import codecs
 from lib.logger import logger
 from subprocess import PIPE
 from subprocess import Popen
-from lib.settings import ROOTDIR
-from lib.settings import PLATFORM
+from lib.settings import ROOTDIR, WORDLISTFILE, PLATFORM
 
 retry = 0
 
@@ -48,7 +50,7 @@ def update_ghdb():
     msg = "[*] Updating Database"
     logger.info(msg)
     try:
-        fname = settings.WORDLISTFILE
+        fname = WORDLISTFILE
         with open(fname, 'r') as f:
             content = f.readlines()
         f.close()
@@ -84,7 +86,7 @@ def update_ghdb():
     except SystemExit:
         msg = "End update"
         logger.debug(msg)
-    except:
+    except Exception:
         retry +=1
         msg = "Database update error"
         logger.debug(msg)
@@ -95,6 +97,6 @@ def update_ghdb():
             logger.info(msg)
             update_ghdb()
         else:
-            msg = "[-] CRITICAL ERROR: Maybe Exploit-db or network is donwn"
+            msg = "[-] CRITICAL ERROR: Maybe Exploit-db or network is down"
             logger.error(msg)
             sys.exit(1)

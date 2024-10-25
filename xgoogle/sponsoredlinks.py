@@ -12,9 +12,10 @@ import re
 import urllib
 import random
 from htmlentitydefs import name2codepoint
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from browser import Browser, BrowserError
+from xgoogle.search import ParseError
 
 #
 # TODO: join GoogleSearch and SponsoredLinks classes under a single base class
@@ -153,8 +154,8 @@ class SponsoredLinks(object):
 
         try:
             page = self.browser.get_page(safe_url)
-        except BrowserError, e:
-            raise SLError, "Failed getting %s: %s" % (e.url, e.error)
+        except BrowserError as e:
+            raise(SLError, "Failed getting %s: %s" % (e.url, e.error))
 
         return BeautifulSoup(page)
 
@@ -219,14 +220,14 @@ class SponsoredLinks(object):
         def entity_replacer(m):
             entity = m.group(1)
             if entity in name2codepoint:
-                return unichr(name2codepoint[entity])
+                return str(name2codepoint[entity])
             else:
                 return m.group(0)
 
         def ascii_replacer(m):
             cp = int(m.group(1))
             if cp <= 255:
-                return unichr(cp)
+                return str(cp)
             else:
                 return m.group(0)
 

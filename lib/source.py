@@ -5,7 +5,7 @@ Copyright (c) 2014 tilt (https://github.com/AeonDave/tilt)
 See the file 'LICENSE' for copying permission
 """
 
-import core
+import lib.core as core
 from lib.logger import logger
 from bs4 import BeautifulSoup
 

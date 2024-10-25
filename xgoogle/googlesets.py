@@ -12,7 +12,7 @@ import re
 import urllib
 import random
 from htmlentitydefs import name2codepoint
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from browser import Browser, BrowserError
 
@@ -77,8 +77,8 @@ class GoogleSets(object):
 
         try:
             page = self.browser.get_page(safe_url)
-        except BrowserError, e:
-            raise GSError, "Failed getting %s: %s" % (e.url, e.error)
+        except BrowserError as e:
+            raise(GSError, "Failed getting %s: %s" % (e.url, e.error))
 
         return BeautifulSoup(page)
 

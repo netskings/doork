@@ -1,0 +1,4 @@
+.trunk
+venv
+.vscode
+tests.py

@@ -5,7 +5,8 @@ Copyright (c) 2016 tilt (https://github.com/AeonDave/doork)
 See the file 'LICENSE' for copying permission
 """
 
-import os ,sys
+import os
+import sys
 
 VERSION = "0.2 alpha"
 AUTHOR = "AeonDave"

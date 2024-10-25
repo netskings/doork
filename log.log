@@ -1,0 +1,18 @@
+-----Start-----
+[*] Starting dork scanner on https://school29.ucoz.org/
+[+] Url Accepted
+[*] Performing scan
+[-] ERROR
+[*] Scan completed
+[+] File log written: log.log
+-----End-----
+
+-----Start-----
+[*] Starting dork scanner on http://calculatebuddy.com
+[+] Url Accepted
+[*] Performing scan
+[-] ERROR
+[*] Scan completed
+[+] File log written: log.log
+-----End-----
+

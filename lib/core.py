@@ -5,11 +5,15 @@ Copyright (c) 2016 tilt (https://github.com/AeonDave/doork)
 See the file 'LICENSE' for copying permission
 """
 
-import re, requests, time, random
+import re
+import requests
+import time
+import random
 from lib.logger import logger
-from xgoogle.search import GoogleSearch, SearchError
+# from xgoogle.search import GoogleSearch, SearchError
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+from googlesearch import search
 
 def is_valid_url(url):
     validate = URLValidator()
@@ -26,7 +30,7 @@ def get_html_from_url(url):
     try:
         r = requests.get(url, headers = user_agent) 
         return r.content
-    except:
+    except Exception:
         logger.error('[-] Error: Host responded badly')
         return False
     
@@ -42,18 +46,19 @@ def scan(url, wordlist):
         try:
             rnd = random_int(2, 5)
             time.sleep(rnd)
-            g = GoogleSearch("site:"+url+" "+dork, random_agent=True)
-            g.results_per_page = 10
-            print("."),
-            results = g.get_results()
-            if len(results) > 0:
-                msg = "[+] Found "+ results +" results with dork: "+dork
+            g = search("Google", num_results=10, sleep_interval=10)
+            #g = GoogleSearch("site:"+url+" "+dork, random_agent=True)
+            #g.results_per_page = 10
+            print(".")
+            # results = g.get_results()
+            if len(g) > 0:
+                msg = "[+] Found "+ g +" results with dork: "+dork
                 logger.info(msg)
-                for res in results:
-                    print res.title.encode('utf8')
-                    print res.url.encode("utf8")
-        except SearchError, e:
-            print "Search failed: %s" % e
+                for res in g:
+                    print(res.title)
+                    print(res.url)
+        except Exception as e:
+            print("Search failed: %s" % e)
     msg = "[+] Scan finished"
     logger.info(msg)
     

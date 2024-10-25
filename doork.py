@@ -5,7 +5,10 @@ Copyright (c) 2016 tilt (https://github.com/AeonDave/doork)
 See the file 'LICENSE' for copying permission
 """
 
-import sys, getopt, logging, os
+import sys
+import getopt
+import logging
+import os
 
 from lib import update
 from lib import actions
@@ -59,7 +62,7 @@ if not target:
 def main():
     if output:
         handler = logging.FileHandler(output)
-        handler.setLevel(logging.INFO)
+        handler.setLevel(logging.DEBUG)
         logger.addHandler(handler)
         
     logger.info('-----Start-----')

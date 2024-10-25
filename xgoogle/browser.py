@@ -10,9 +10,11 @@
 
 import random
 import socket
-import urllib
-import urllib2
-import httplib
+import ssl
+import urllib.parse
+import urllib.request
+import urllib.error
+import http.client
 
 BROWSERS = (
     'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; FSL 7.0.6.01001)'
@@ -44,31 +46,30 @@ class BrowserError(Exception):
         self.url = url
         self.error = error
 
-class PoolHTTPConnection(httplib.HTTPConnection):
+class PoolHTTPConnection(http.client.HTTPConnection):
     def connect(self):
         """Connect to the host and port specified in __init__."""
         msg = "getaddrinfo returns an empty list"
-        for res in socket.getaddrinfo(self.host, self.port, 0,
-                                      socket.SOCK_STREAM):
+        for res in socket.getaddrinfo(self.host, self.port, 0, socket.SOCK_STREAM):
             af, socktype, proto, canonname, sa = res
             try:
                 self.sock = socket.socket(af, socktype, proto)
                 if self.debuglevel > 0:
-                    print "connect: (%s, %s)" % (self.host, self.port)
+                    print("connect: (%s, %s)" % (self.host, self.port))
                 self.sock.settimeout(TIMEOUT)
                 self.sock.connect(sa)
-            except socket.error, msg:
+            except socket.error:
                 if self.debuglevel > 0:
-                    print 'connect fail:', (self.host, self.port)
+                    print('connect fail:', (self.host, self.port))
                 if self.sock:
                     self.sock.close()
                 self.sock = None
                 continue
             break
         if not self.sock:
-            raise socket.error, msg
+            raise socket.error(msg)
 
-class PoolHTTPHandler(urllib2.HTTPHandler):
+class PoolHTTPHandler(urllib.request.HTTPHandler):
     def http_open(self, req):
         return self.do_open(PoolHTTPConnection, req)
 
@@ -82,25 +83,25 @@ class Browser(object):
         self.debug = debug
 
     def get_page(self, url, data=None):
-        handlers = [PoolHTTPHandler]
-        opener = urllib2.build_opener(*handlers)
-        if data: data = urllib.urlencode(data)
-        request = urllib2.Request(url, data, self.headers)
+        handlers = [PoolHTTPHandler()]
+        opener = urllib.request.build_opener(*handlers)
+        if data:
+            data = urllib.parse.urlencode(data).encode('utf-8')
+        request = urllib.request.Request(url, data, headers=self.headers)
         try:
-            response = opener.open(request)
+            response = opener.open(request, timeout=TIMEOUT)
             return response.read()
-        except (urllib2.HTTPError, urllib2.URLError), e:
+        except (urllib.error.HTTPError, urllib.error.URLError) as e:
             raise BrowserError(url, str(e))
-        except (socket.error, socket.sslerror), msg:
+        except (socket.error, ssl.SSLError) as msg:
             raise BrowserError(url, msg)
-        except socket.timeout, e:
+        except socket.timeout:
             raise BrowserError(url, "timeout")
         except KeyboardInterrupt:
             raise
-        except:
-            raise BrowserError(url, "unknown error")
+        except Exception as e:
+            raise BrowserError(url, "unknown error: " + str(e))
 
     def set_random_user_agent(self):
         self.headers['User-Agent'] = random.choice(BROWSERS)
         return self.headers['User-Agent']
-
