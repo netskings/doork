@@ -3,7 +3,7 @@
 description
 ----
 
-fork of doork on python3
+fork of doork on python 3
 
 doork is a open-source passive vulnerability auditor tool that automates the process of searching on Google information about specific website based on dorks.
 
